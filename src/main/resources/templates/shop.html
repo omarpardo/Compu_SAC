@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Male_Fashion Template">
+    <meta name="keywords" content="Male_Fashion, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Compu SAC | Tienda</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="/../css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <link rel="stylesheet" href="/../css/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="../css/magnific-popup.css" type="text/css">
+    <link rel="stylesheet" href="/../css/nice-select.css" type="text/css">
+    <link rel="stylesheet" href="/../css/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="/../css/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="/../css/style.css" type="text/css">
+</head>
+
+<body>
+
+    <div th:include="./header.html::header"></div>
+
+    <!-- Breadcrumb Section Begin -->
+    <section class="breadcrumb-option">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12"> 
+                    <div class="breadcrumb__text">
+                        <h4>Productos</h4>
+                        <div class="breadcrumb__links">
+                            <a href="./index.html">Inicio</a>
+                            <span>Productos</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Breadcrumb Section End -->
+
+    <!-- Shop Section Begin -->
+    <section class="shop spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="shop__sidebar">
+                        <div class="shop__sidebar__accordion">
+                            <div class="accordion" id="accordionExample">
+                                <div class="card">
+                                    <div class="card-heading">
+                                        <a data-toggle="collapse" data-target="#collapseOne">Categorias</a>
+                                    </div>
+                                    <div id="collapseOne" class="collapse show" data-parent="#accordionExample">
+                                        <div class="card-body">
+                                            <div class="shop__sidebar__categories">
+                                                <ul class="nice-scroll">
+                                                    <li th:each="categoria : ${categoria}">
+                                                        <a th:href="@{'/shop/categoria/'+${categoria.id}}"
+                                                            th:text="${categoria.name}"></a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-9">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6 col-sm-6" th:each="producto : ${productos}">
+                            <div class="product__item">
+                                <a th:href="@{'/shop-details/'+${producto.id}}">
+                                    <img class="product__item__pic set-bg"
+                                        th:src="@{'/../img/product/'+${producto.banner}}" />
+                                </a>
+                                <div class="product__item__text">
+                                    <h6 th:text="${producto.name}"></h6>
+                                    <form th:action="@{/shop/add-product-cart}" method="POST">
+                                        <input type="hidden" th:value="${producto.id}" name="idProduct">
+                                        <input type="hidden" value="1" name="cantidad">
+                                        <button type="submit" class="add-cart">+ Agregar al carrito</button>
+                                    </form>
+                                    <div class="rating">
+                                        <i class="fa fa-star-o"></i>
+                                        <i class="fa fa-star-o"></i>
+                                        <i class="fa fa-star-o"></i>
+                                        <i class="fa fa-star-o"></i>
+                                        <i class="fa fa-star-o"></i>
+                                    </div>
+                                    <h5 th:text="${'S/ ' + producto.price}"></h5>
+                                    <div class="product__color__select">
+                                        <label for="pc-4">
+                                            <input type="radio" id="pc-4">
+                                        </label>
+                                        <label class="active black" for="pc-5">
+                                            <input type="radio" id="pc-5">
+                                        </label>
+                                        <label class="grey" for="pc-6">
+                                            <input type="radio" id="pc-6">
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Shop Section End -->
+
+    <div class="footer" th:include="./footer.html::footer"></div>
+
+
+
+    <!-- Search Begin -->
+    <div class="search-model">
+        <div class="h-100 d-flex align-items-center justify-content-center">
+            <div class="search-close-switch">+</div>
+            <form class="search-model-form">
+                <input type="text" id="search-input" placeholder="Search here.....">
+            </form>
+        </div>
+    </div>
+    <!-- Search End -->
+
+    <!-- Js Plugins -->
+    <script src="/../js/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.0.4/popper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.0.4/popper.js"></script>
+    <script src="/../js/bootstrap.min.js"></script>
+    <script src="/../js/jquery.nice-select.min.js"></script>
+    <script src="/../js/jquery.nicescroll.min.js"></script>
+    <script src="/../js/jquery.magnific-popup.min.js"></script>
+    <script src="/../js/jquery.countdown.min.js"></script>
+    <script src="/../js/jquery.slicknav.js"></script>
+    <script src="/../js/mixitup.min.js"></script>
+    <script src="/../js/owl.carousel.min.js"></script>
+    <script src="/../js/main.js"></script>
+</body>
+
+</html>
