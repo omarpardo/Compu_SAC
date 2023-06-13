@@ -71,9 +71,10 @@
 							<i class="fa-regular fa-user"></i>
 						</button>
 						<div class="dropdown-menu">
-							<a> </a>
+							<a class="dropdown-item" th:href="${'/usuario/pedidos/'+session.idusuario}">
+								<i class="fa-solid fa-bag-shopping"></i> Pedidos </a>
 							<div class="dropdown-divider"></div>
-							<a> </a>
+							<!--<a> </a>-->
 							<div class="dropdown-divider" th:if="${session.rol}"></div>
 							<a class="dropdown-item" th:if="${session.userName}" href="/usuario/logout">
 								<i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar Sesión

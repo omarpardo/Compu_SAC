@@ -5,10 +5,19 @@ import com.compusac.models.service.*;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,14 +28,24 @@ public class ProductController {
 	private final IProductService productoService;
 
 	private final ICategorysService categoryService;
+	
+	private final IOrderService orderService;
+
+	private final IOrderDetailService detailService;
+
+	private final IUserService userService;
+
 
 
 	List<OrderDetail> details = new ArrayList<>();
 	Order order = new Order();
 
-	public ProductController(IProductService productoService, ICategorysService categoryService) {
+	public ProductController(IProductService productoService, ICategorysService categoryService, IOrderService orderService, IOrderDetailService detailService, IUserService userService, IProductDetailService productDetailService) {
 		this.productoService = productoService;
-		this.categoryService = categoryService;	
+		this.categoryService = categoryService;
+		this.orderService = orderService;
+		this.detailService = detailService;
+		this.userService = userService;		
 	}
 
 	@GetMapping
@@ -101,6 +120,38 @@ public class ProductController {
 		session.setAttribute("cart_products", details.size());
 
 		return "shopping-cart";
+	}
+	
+	@GetMapping("/checkout")
+	public String checkout(Model model) {
+		model.addAttribute("cart", details);
+		model.addAttribute("order", order);
+		return "checkout";
+	}
+	
+	@PostMapping("/buy")
+	public String comprar(HttpSession session) {
+		Date fechaCreacion = new Date();
+		order.setFechaCreacion(fechaCreacion);
+		order.setNumero(orderService.generarNumeroOrden());
+
+		Usuario usuario = userService.findById(Long.parseLong(session.getAttribute("idusuario").toString()));
+
+		order.setUsuario(usuario);
+		orderService.create(order);
+
+		// guardar detalles
+		for (OrderDetail dt : details) {
+			dt.setOrder(order);
+			detailService.create(dt);
+		}
+
+		// limpiar lista y orden
+		order = new Order();
+		details.clear();
+		session.removeAttribute("cart_products");
+		return "redirect:/index";
+
 	}
 
 }
