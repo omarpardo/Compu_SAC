@@ -31,15 +31,20 @@ public class UserController {
 
     private final OrderReportService reportService;
     
+    private final IProductService productoService;
+
+    private final ICategorysService categoryService;
 
     public UserController(IUserService userService, IPersonService personService, IOrderService orderService,
-            IOrderDetailService orderDetailService, OrderReportService reportService, IProductService productoService, ICategorysService categoryService) {
-    	this.userService = userService;
-    	this.personService = personService;
-    	this.orderService = orderService;
-    	this.orderDetailService = orderDetailService;
-    	this.reportService = reportService;
-    } 
+                          IOrderDetailService orderDetailService, OrderReportService reportService, IProductService productoService, ICategorysService categoryService) {
+        this.userService = userService;
+        this.personService = personService;
+        this.orderService = orderService;
+        this.orderDetailService = orderDetailService;
+        this.reportService = reportService;
+        this.productoService = productoService;
+        this.categoryService = categoryService;
+    }
 
     @GetMapping("/registro")
     public String create() {
@@ -162,6 +167,36 @@ public class UserController {
         }
 
         return "pedido-detalle";
+    }
+    
+    @GetMapping("/productos")
+    public String productos(Model model) {
+        model.addAttribute("productosAdmin", productoService.findAll());
+        return "productos-admin";
+    }
+    
+    @GetMapping(value = "/save/producto")
+    public String saveProduct(Model model) throws ChangeSetPersister.NotFoundException {
+        model.addAttribute("categorias", categoryService.findAll());
+        return "save-form-producto";
+    }
+    
+    @GetMapping(value = "/update/producto/{productId}")
+    public String updateProduct(Model model, @PathVariable("productId") Long productId) throws ChangeSetPersister.NotFoundException {
+        model.addAttribute("producto", productoService.findById(productId));
+        model.addAttribute("categorias", categoryService.findAll());
+        return "update-form-producto";
+    }
+
+    @GetMapping("/delete/producto/{product_id}")
+    public String deleteProducto(@PathVariable("product_id") String product_id) {
+    	try {
+        	this.productoService.delete(Long.valueOf(product_id));
+    	} catch(Exception e) {
+    		System.out.println(e.getMessage());
+    	}
+
+    	return "redirect:/usuario/productos";
     }
 }
 

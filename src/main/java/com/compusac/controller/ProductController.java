@@ -35,17 +35,21 @@ public class ProductController {
 
 	private final IUserService userService;
 
+	private final IPersonService personService;
 
+	private final IProductDetailService productDetailService;
 
 	List<OrderDetail> details = new ArrayList<>();
 	Order order = new Order();
 
-	public ProductController(IProductService productoService, ICategorysService categoryService, IOrderService orderService, IOrderDetailService detailService, IUserService userService, IProductDetailService productDetailService) {
+	public ProductController(IProductService productoService, ICategorysService categoryService, IOrderService orderService, IOrderDetailService detailService, IUserService userService, IPersonService personService, IProductDetailService productDetailService) {
 		this.productoService = productoService;
 		this.categoryService = categoryService;
 		this.orderService = orderService;
 		this.detailService = detailService;
-		this.userService = userService;		
+		this.userService = userService;
+		this.personService = personService;
+		this.productDetailService = productDetailService;
 	}
 
 	@GetMapping
@@ -154,4 +158,61 @@ public class ProductController {
 
 	}
 
+	@PostMapping("/update-product")
+	public String save(Product product, @RequestParam("baner") MultipartFile baner, RedirectAttributes attributes) {
+		// check if file is empty
+		if (baner.isEmpty()) {
+			attributes.addFlashAttribute("message", "Please select a file to upload.");
+			return "redirect:/";
+		}
+		try {
+			String UPLOAD_DIR = "C:\\Users\\OMAR\\Documents\\Categorias\\";
+			//Subir imagen del producto
+			String banerName = StringUtils.cleanPath(baner.getOriginalFilename());
+			Path path = Paths.get(UPLOAD_DIR + banerName);
+			Files.copy(baner.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
+			product.setBanner(banerName);
+			productoService.update(product, product.getId());
+
+			attributes.addFlashAttribute("message","El producto fue actualizado");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "redirect:/usuario/productos";
+	}
+	
+	@PostMapping("/save-product")
+	public String saveProduct(Product product,@RequestParam("baner") MultipartFile baner, RedirectAttributes attributes) {
+		
+		if (baner.isEmpty()) {
+			attributes.addFlashAttribute("message", "Please select a file to upload.");
+			return "redirect:/";
+		}
+		try {
+			String UPLOAD_DIR = "C:\\Users\\OMAR\\Desktop\\INTEGRADOR 2\\TA03_Proyecto\\Compu_SAC\\src\\main\\resources\\static\\img\\product\\";
+			//Subir imagen del producto
+			String banerName = StringUtils.cleanPath(baner.getOriginalFilename());
+			Path path = Paths.get(UPLOAD_DIR + banerName);
+			Files.copy(baner.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
+			product.setBanner(banerName);
+			
+			Product products = productoService.create(product);
+			ProductDetail productDetail = new ProductDetail();
+			
+			productDetail.setDescription(product.getProduct_information());
+			productDetail.setImage(product.getBanner());
+			productDetail.setMain(true);
+			productDetail.setProduct(products);
+			
+			productDetailService.create(productDetail);
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return "redirect:/usuario/productos";
+	}
+	
 }
